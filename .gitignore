@@ -1,0 +1,4 @@
+obj/
+codexion
+*.o
+*.d
