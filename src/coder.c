@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   coder.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:25:03 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [41] Read the global stop flag under its dedicated mutex. */
 int	sim_should_stop(t_sim *sim)
 {
 	int	v;
@@ -23,8 +22,7 @@ int	sim_should_stop(t_sim *sim)
 	return (v);
 }
 
-/* [42] Post-sleep bookkeeping: bump compile_count and the global          */
-/*      "finished" tally if this coder just hit compiles_required.         */
+/* Use == (not >=) so a coder is counted into finished_count exactly once.  */
 static void	compile_finalize(t_sim *sim, t_coder *c)
 {
 	pthread_mutex_lock(&c->state_lock);
@@ -36,8 +34,8 @@ static void	compile_finalize(t_sim *sim, t_coder *c)
 	pthread_mutex_unlock(&sim->finished_lock);
 }
 
-/* [43] Compile cycle. Always acquire the lower-id dongle first to break   */
-/*      the dining-philosophers circular-wait condition.                   */
+/* Always acquire the lower-id dongle first: a global resource ordering     */
+/* that breaks the dining-philosophers circular-wait, preventing deadlock.  */
 static void	coder_compile(t_sim *sim, t_coder *c)
 {
 	t_dongle	*first;
@@ -66,7 +64,6 @@ static void	coder_compile(t_sim *sim, t_coder *c)
 	dongle_release(sim, first, c->id);
 }
 
-/* [44] Helper for the debug / refactor phases (log + cooperative sleep). */
 static void	coder_phase(t_sim *sim, t_coder *c, const char *msg, long ms)
 {
 	if (sim_should_stop(sim))
@@ -75,8 +72,8 @@ static void	coder_phase(t_sim *sim, t_coder *c, const char *msg, long ms)
 	precise_sleep_ms(sim, ms);
 }
 
-/* [45] Coder thread entry. The 1-coder degenerate branch is inlined: the  */
-/*      lone coder grabs the only dongle and waits for stop.               */
+/* With a single coder there is only one dongle, so compiling (which needs  */
+/* two) is impossible: the lone coder just holds it and waits for stop.     */
 void	*coder_thread(void *arg)
 {
 	t_coder	*c;
