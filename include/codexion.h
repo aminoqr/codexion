@@ -3,30 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:24:50 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-/*                                                                            */
-/*  Reading guide: numbered comments [NN] mark the order in which the         */
-/*  codebase was authored. Read them in ascending order:                      */
-/*                                                                            */
-/*    [01]..[08]  this header (types + public API)                            */
-/*    [09]..[11]  src/main.c                                                  */
-/*    [12]..[16]  src/parse.c                                                 */
-/*    [17]..[19]  src/time.c                                                  */
-/*    [20]..[22]  src/log.c                                                   */
-/*    [23]..[25]  src/heap.c                                                  */
-/*    [26]..[30]  src/heap_ops.c                                              */
-/*    [31]..[35]  src/init.c                                                  */
-/*    [36]..[40]  src/dongle.c                                                */
-/*    [41]..[45]  src/coder.c                                                 */
-/*    [46]..[49]  src/monitor.c                                               */
-/*    [50]..[53]  src/cleanup.c                                               */
-/*                                                                            */
 
 #ifndef CODEXION_H
 # define CODEXION_H
@@ -38,14 +20,13 @@
 # include <unistd.h>
 # include <sys/time.h>
 
-/* [01] Scheduler policy used by every dongle's waiting queue. */
 typedef enum e_scheduler
 {
 	SCHED_FIFO_POLICY = 0,
 	SCHED_EDF_POLICY = 1
 }	t_scheduler;
 
-/* [02] Read-only configuration parsed once from the command-line. */
+/* Read-only after parsing; shared freely without a lock. */
 typedef struct s_config
 {
 	int			num_coders;
@@ -58,7 +39,6 @@ typedef struct s_config
 	t_scheduler	scheduler;
 }	t_config;
 
-/* [03] One entry inside a dongle's priority queue (the "waiter"). */
 typedef struct s_waiter
 {
 	int		coder_id;
@@ -66,7 +46,6 @@ typedef struct s_waiter
 	long	deadline_ms;
 }	t_waiter;
 
-/* [04] Custom binary heap used as priority queue (FIFO or EDF comparator). */
 typedef struct s_heap
 {
 	t_waiter	*items;
@@ -78,7 +57,7 @@ typedef struct s_heap
 /* Forward declaration: t_coder needs to back-point at the simulation state. */
 typedef struct s_sim	t_sim;
 
-/* [05] Dongle resource state, protected by `lock`. Coders wait on `cond`. */
+/* State guarded by `lock`; coders block on `cond` until granted. */
 typedef struct s_dongle
 {
 	int				id;
@@ -90,7 +69,7 @@ typedef struct s_dongle
 	t_heap			waiters;
 }	t_dongle;
 
-/* [06] Coder state. last_compile_start_ms is the burnout reference point. */
+/* last_compile_start_ms is the burnout reference point. */
 typedef struct s_coder
 {
 	int				id;
@@ -101,7 +80,6 @@ typedef struct s_coder
 	t_sim			*sim;
 }	t_coder;
 
-/* [07] Top-level simulation state, allocated once on main()'s stack. */
 struct s_sim
 {
 	t_config		cfg;
@@ -115,8 +93,6 @@ struct s_sim
 	t_dongle		*dongles;
 	pthread_t		monitor_thread;
 };
-
-/* [08] Public API across translation units. */
 
 /* parse.c */
 int		parse_args(int argc, char **argv, t_config *cfg);
