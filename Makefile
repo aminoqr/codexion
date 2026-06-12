@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+         #
+#    By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/05/09 17:50:42 by aminoqr           #+#    #+#              #
-#    Updated: 2026/05/09 17:50:42 by aminoqr          ###   ########.fr        #
+#    Created: 2026/05/09 17:50:42 by aasylbye          #+#    #+#              #
+#    Updated: 2026/06/12 18:26:21 by aasylbye         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
