@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:25:46 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [17] Wall-clock millisecond timestamp built from gettimeofday(). */
 long	now_ms(void)
 {
 	struct timeval	tv;
@@ -21,14 +20,13 @@ long	now_ms(void)
 	return ((long)tv.tv_sec * 1000L + (long)tv.tv_usec / 1000L);
 }
 
-/* [18] Milliseconds elapsed since `start_ms`. */
 long	elapsed_ms(long start_ms)
 {
 	return (now_ms() - start_ms);
 }
 
-/* [19] Sleep `duration_ms` in 50 ms slices, re-checking sim_should_stop    */
-/*      between slices so the simulation can shut down promptly.            */
+/* Sleep in 50 ms slices, re-checking the stop flag between slices so the   */
+/* coder shuts down promptly instead of sleeping the whole duration.        */
 void	precise_sleep_ms(t_sim *sim, long duration_ms)
 {
 	long	deadline;
