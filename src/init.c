@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:25:19 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [31] Initialise a single dongle (mutex, condvar, waiter heap). */
 static int	init_dongle(t_dongle *d, int id, t_scheduler pol, int capacity)
 {
 	d->id = id;
@@ -28,7 +27,6 @@ static int	init_dongle(t_dongle *d, int id, t_scheduler pol, int capacity)
 	return (0);
 }
 
-/* [32] Initialise a single coder (state lock + back-pointer to sim). */
 static int	init_coder(t_coder *c, int id, t_sim *sim)
 {
 	c->id = id;
@@ -40,7 +38,6 @@ static int	init_coder(t_coder *c, int id, t_sim *sim)
 	return (0);
 }
 
-/* [33] Allocate the coder/dongle arrays and initialise each element. */
 static int	init_arrays(t_sim *sim)
 {
 	int	i;
@@ -64,7 +61,6 @@ static int	init_arrays(t_sim *sim)
 	return (0);
 }
 
-/* [34] Initialise simulation-wide mutexes (stop / finished / log). */
 static int	init_sync(t_sim *sim)
 {
 	if (pthread_mutex_init(&sim->stop_lock, NULL) != 0)
@@ -78,7 +74,6 @@ static int	init_sync(t_sim *sim)
 	return (0);
 }
 
-/* [35] Top-level orchestrator called from main(). */
 int	sim_init(t_sim *sim)
 {
 	if (init_sync(sim) != 0)
