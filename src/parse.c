@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:25:42 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [12] Strict positive-long parser. Rejects empty input, signs, non-digits. */
 static int	parse_long_positive(const char *s, long *out)
 {
 	long	value;
@@ -35,7 +34,6 @@ static int	parse_long_positive(const char *s, long *out)
 	return (0);
 }
 
-/* [13] Recognise the scheduler keyword (must be exactly "fifo" or "edf"). */
 static int	parse_scheduler(const char *s, t_scheduler *out)
 {
 	if (!s)
@@ -47,7 +45,6 @@ static int	parse_scheduler(const char *s, t_scheduler *out)
 	return (1);
 }
 
-/* [14] Reject configurations the simulation cannot honour. */
 static int	validate_config(t_config *cfg)
 {
 	if (cfg->num_coders < 1 || cfg->compiles_required < 1)
@@ -61,7 +58,6 @@ static int	validate_config(t_config *cfg)
 	return (0);
 }
 
-/* [15] Parse all 8 mandatory arguments into the config struct. */
 int	parse_args(int argc, char **argv, t_config *cfg)
 {
 	long	v;
@@ -89,7 +85,6 @@ int	parse_args(int argc, char **argv, t_config *cfg)
 	return (validate_config(cfg));
 }
 
-/* [16] User-facing usage string printed on bad input. */
 void	print_usage(void)
 {
 	fprintf(stderr,
