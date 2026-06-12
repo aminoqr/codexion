@@ -2,3 +2,4 @@ obj/
 codexion
 *.o
 *.d
+.vscode/
