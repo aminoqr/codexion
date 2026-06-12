@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   dongle.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:25:03 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [36] Read this coder's burnout deadline (last_compile_start + ttb).      */
-/*      Always taken with state_lock held to avoid torn reads.              */
+/* Read under state_lock to avoid a torn 64-bit read of the timestamp.      */
 static long	compute_deadline(t_sim *sim, int coder_id)
 {
 	t_coder	*c;
@@ -26,7 +25,6 @@ static long	compute_deadline(t_sim *sim, int coder_id)
 	return (value);
 }
 
-/* [37] Decide whether the dongle can be granted to this coder right now.  */
 static int	dongle_can_grant(t_dongle *d, int coder_id)
 {
 	t_waiter	top;
@@ -40,9 +38,8 @@ static int	dongle_can_grant(t_dongle *d, int coder_id)
 	return (top.coder_id == coder_id);
 }
 
-/* [38] One wait slice. cond_timedwait wakes on a release broadcast OR     */
-/*      after a 10 ms backstop so we re-check ownership periodically even */
-/*      if a broadcast is delayed by scheduler unfairness.                 */
+/* Wake on a release broadcast or after a 10 ms backstop, so a delayed or   */
+/* missed broadcast can never block a waiter indefinitely.                  */
 static void	dongle_wait_step(t_dongle *d)
 {
 	struct timespec	ts;
@@ -58,8 +55,7 @@ static void	dongle_wait_step(t_dongle *d)
 	pthread_cond_timedwait(&d->cond, &d->lock, &ts);
 }
 
-/* [39] Block until this coder owns the dongle, or until stop. Returns 1   */
-/*      on success (dongle taken), 0 on cancellation.                      */
+/* Returns 1 when the dongle was taken, 0 if cancelled by stop. */
 int	dongle_acquire(t_sim *sim, t_dongle *d, int coder_id)
 {
 	long	seq;
@@ -83,8 +79,8 @@ int	dongle_acquire(t_sim *sim, t_dongle *d, int coder_id)
 	return (1);
 }
 
-/* [40] Release the dongle, arm cooldown, and wake every waiter so the     */
-/*      next heap-top coder can re-evaluate dongle_can_grant().            */
+/* Broadcast (not signal) so every waiter re-checks: only the heap top can  */
+/* actually be granted, the rest go back to waiting.                        */
 void	dongle_release(t_sim *sim, t_dongle *d, int coder_id)
 {
 	(void)coder_id;
