@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:25:30 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [46] Return the id of the first burned-out coder, or 0 if none. A coder */
-/*      is burned out iff (now - last_compile_start) >= time_to_burnout.   */
+/* Returns the first coder where now - last_compile_start >= ttb, else 0.   */
 static int	burnout_check(t_sim *sim)
 {
 	int		i;
@@ -36,7 +35,6 @@ static int	burnout_check(t_sim *sim)
 	return (0);
 }
 
-/* [47] True iff every coder has reached the required compile count. */
 static int	all_finished(t_sim *sim)
 {
 	int	v;
@@ -47,7 +45,7 @@ static int	all_finished(t_sim *sim)
 	return (v);
 }
 
-/* [48] Set stop=1 and wake every dongle so threads exit cond_timedwait. */
+/* Set stop, then wake every dongle so parked coders leave cond_timedwait.  */
 static void	broadcast_stop(t_sim *sim)
 {
 	int	i;
@@ -65,8 +63,7 @@ static void	broadcast_stop(t_sim *sim)
 	}
 }
 
-/* [49] Monitor loop. 2 ms cadence keeps burnout detection comfortably    */
-/*      under the 10 ms log-latency requirement.                          */
+/* 2 ms polling keeps burnout detection well under the 10 ms log budget.    */
 void	*monitor_thread(void *arg)
 {
 	t_sim	*sim;
