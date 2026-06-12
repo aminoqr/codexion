@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   heap.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:25:14 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [23] Allocate the items array and remember the comparator policy. */
 int	heap_init(t_heap *h, int capacity, t_scheduler policy)
 {
 	if (capacity < 1)
@@ -26,7 +25,6 @@ int	heap_init(t_heap *h, int capacity, t_scheduler policy)
 	return (0);
 }
 
-/* [24] Look at the highest-priority waiter without removing it. */
 int	heap_peek(t_heap *h, t_waiter *out)
 {
 	if (h->size == 0)
@@ -35,7 +33,7 @@ int	heap_peek(t_heap *h, t_waiter *out)
 	return (1);
 }
 
-/* [25] Free the heap storage. Safe on a zero-initialised heap. */
+/* Safe to call on a zero-initialised heap (cleanup after a failed init). */
 void	heap_destroy(t_heap *h)
 {
 	if (h->items)
