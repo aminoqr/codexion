@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:24:35 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [09] Spawn the monitor first, then every coder. Returns 1 on failure.    */
 static int	spawn_threads(t_sim *sim)
 {
 	int	i;
@@ -30,7 +29,6 @@ static int	spawn_threads(t_sim *sim)
 	return (0);
 }
 
-/* [10] Join every coder, then the monitor (the monitor exits last).       */
 static void	join_threads(t_sim *sim)
 {
 	int	i;
@@ -44,9 +42,8 @@ static void	join_threads(t_sim *sim)
 	pthread_join(sim->monitor_thread, NULL);
 }
 
-/* [10] Boot the simulation. We must seed every coder's last_compile_start  */
-/*      BEFORE launching the monitor, otherwise the monitor could observe a */
-/*      0-valued field and mis-fire a "burned out" right at startup.        */
+/* Seed every coder's last_compile_start BEFORE launching the monitor,      */
+/* otherwise it could see a 0 field and mis-fire a burnout at startup.      */
 static int	run_simulation(t_sim *sim)
 {
 	int	i;
@@ -64,7 +61,6 @@ static int	run_simulation(t_sim *sim)
 	return (0);
 }
 
-/* [11] Program entry point: parse, init, run, cleanup. */
 int	main(int argc, char **argv)
 {
 	t_sim	sim;
