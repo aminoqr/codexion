@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   log.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:25:23 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [20] Print one timestamped line under the log mutex. fflush guarantees   */
-/*      the burnout line escapes stdio block-buffering well within 10 ms.   */
+/* fflush under the lock pushes the line out of stdio buffering so the      */
+/* burnout line meets the 10 ms latency budget.                            */
 static void	log_line(t_sim *sim, int coder_id, const char *msg)
 {
 	long	ts;
@@ -25,8 +25,7 @@ static void	log_line(t_sim *sim, int coder_id, const char *msg)
 	pthread_mutex_unlock(&sim->log_lock);
 }
 
-/* [21] Standard state log. Suppressed once the simulation has stopped so   */
-/*      we never print "is compiling" after the "burned out" line.          */
+/* Suppressed after stop so no state line ever follows the burnout line.    */
 void	log_state(t_sim *sim, int coder_id, const char *msg)
 {
 	if (sim_should_stop(sim))
@@ -34,8 +33,7 @@ void	log_state(t_sim *sim, int coder_id, const char *msg)
 	log_line(sim, coder_id, msg);
 }
 
-/* [22] Burnout log. Always printed, even while `stop` is being set, so     */
-/*      the line escapes within the 10 ms latency budget.                   */
+/* Always printed (never suppressed), even as stop is being set.            */
 void	log_burnout(t_sim *sim, int coder_id)
 {
 	log_line(sim, coder_id, "burned out");
