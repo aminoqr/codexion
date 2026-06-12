@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   heap_ops.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:25:15 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [26] Strict-less comparator. EDF first compares deadlines; FIFO never    */
-/*      does. arrival_seq and coder_id are deterministic tie-breakers.      */
+/* EDF compares deadlines first; FIFO never does. arrival_seq then coder_id */
+/* are deterministic tie-breakers so ordering is never ambiguous.           */
 static int	waiter_less(const t_waiter *a, const t_waiter *b, t_scheduler p)
 {
 	if (p == SCHED_EDF_POLICY && a->deadline_ms != b->deadline_ms)
@@ -23,7 +23,6 @@ static int	waiter_less(const t_waiter *a, const t_waiter *b, t_scheduler p)
 	return (a->coder_id < b->coder_id);
 }
 
-/* [27] Restore the heap invariant upwards after an insert at position i. */
 static void	sift_up(t_heap *h, int i)
 {
 	int			parent;
@@ -41,7 +40,6 @@ static void	sift_up(t_heap *h, int i)
 	}
 }
 
-/* [28] Restore the heap invariant downwards after a removal at position 0.*/
 static void	sift_down(t_heap *h, int i)
 {
 	int			best;
@@ -66,7 +64,6 @@ static void	sift_down(t_heap *h, int i)
 	}
 }
 
-/* [29] Insert a new waiter and re-heapify upwards. */
 int	heap_push(t_heap *h, int coder_id, long seq, long deadline)
 {
 	if (h->size >= h->capacity)
@@ -79,7 +76,6 @@ int	heap_push(t_heap *h, int coder_id, long seq, long deadline)
 	return (0);
 }
 
-/* [30] Remove the top-priority waiter and re-heapify downwards. */
 int	heap_pop(t_heap *h)
 {
 	if (h->size == 0)
