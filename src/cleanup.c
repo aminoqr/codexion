@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aminoqr <aminoqr@student.42.fr>            +#+  +:+       +#+        */
+/*   By: aasylbye <aasylbye@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/05/09 17:37:15 by aminoqr           #+#    #+#             */
-/*   Updated: 2026/05/09 17:37:15 by aminoqr          ###   ########.fr       */
+/*   Created: 2026/05/09 17:37:15 by aasylbye          #+#    #+#             */
+/*   Updated: 2026/06/12 18:24:59 by aasylbye         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-/* [50] Destroy every dongle's mutex / condvar / heap. */
 static void	cleanup_dongles(t_sim *sim)
 {
 	int	i;
@@ -31,7 +30,6 @@ static void	cleanup_dongles(t_sim *sim)
 	sim->dongles = NULL;
 }
 
-/* [51] Destroy every coder's state lock. */
 static void	cleanup_coders(t_sim *sim)
 {
 	int	i;
@@ -48,7 +46,6 @@ static void	cleanup_coders(t_sim *sim)
 	sim->coders = NULL;
 }
 
-/* [52] Destroy global locks created by init_sync. */
 static void	cleanup_sync(t_sim *sim)
 {
 	pthread_mutex_destroy(&sim->stop_lock);
@@ -56,7 +53,7 @@ static void	cleanup_sync(t_sim *sim)
 	pthread_mutex_destroy(&sim->log_lock);
 }
 
-/* [53] Top-level cleanup invoked from main() after threads have joined. */
+/* Called from main() only after every thread has been joined. */
 void	sim_cleanup(t_sim *sim)
 {
 	cleanup_dongles(sim);
